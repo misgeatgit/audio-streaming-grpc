@@ -1,0 +1,14 @@
+
+message AudioData{
+ required bytes audio = 1;
+}
+
+message AudioInfo {
+ required int32 id = 1;
+}
+
+service AudioStreamingService {
+  rpc GetAudioData (AudioInfo) returns (stream AudioData) {}
+
+}
+

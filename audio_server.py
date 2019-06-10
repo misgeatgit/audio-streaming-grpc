@@ -11,11 +11,17 @@ class AudioStreamingServiceServicer(audio_messages_pb2_grpc.AudioStreamingServic
        print "Sending bell-ringing-01.mp3"
        with open('bell-ringing-01.mp3', 'rb') as audio_data:
            byte = audio_data.read(1)
+           audio_chunk = audio_messages_pb2.AudioDataSeq()
            while byte != "":
-               audio_chunk = audio_messages_pb2.AudioData()
-               audio_chunk.audio = byte
-               yield audio_chunk
+               audio_chunk.audio.append(byte)
+               if len(audio_chunk.audio) == 1024:
+                   yield audio_chunk
+                   global audio_chunk
+                   audio_chunk = audio_messages_pb2.AudioDataSeq()
                byte = audio_data.read(1)
+           
+           if len(audio_chunk.audio) > 0:
+               yield audio_chunk
        print "Done."
 
 def serve():
